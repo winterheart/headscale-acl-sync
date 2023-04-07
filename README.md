@@ -12,6 +12,7 @@ headscale-acl-sync requires:
 * python 3.x
 * jinja2 (https://pypi.org/project/Jinja2/)
 * ldap3 (https://pypi.org/project/ldap3/)
+* pyaml (https://pypi.org/project/PyYAML/)
 
 Usage
 -----
