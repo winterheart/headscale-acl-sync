@@ -1,0 +1,10 @@
+groups:
+  # Automated Jinja2 controlled groups begin
+{%for group_key, group_value in groups.items() %}
+  group:{{ group_key.split("_")[1] }}:
+{% for entry in group_value %}
+    - {{ entry }}
+{% endfor %}
+
+{% endfor %}
+  # Automated Jinja2 controlled groups end
