@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from argparse import ArgumentParser
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Template
 from ldap3 import ALL, Connection, Server
 import os.path
 import yaml
@@ -38,8 +38,9 @@ class LDAPSync:
         return groups
 
     def prepare_acls(self, groups):
-        env = Environment(loader=FileSystemLoader("."), trim_blocks=True)
-        template = env.get_template(self.options["jinja_template"])
+        with open(self.options["jinja_template"]) as file_:
+            template = Template(file_.read(), trim_blocks=True)
+
         context = {
             "groups": groups,
         }
