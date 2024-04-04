@@ -20,20 +20,21 @@ class LDAPSync:
         groups = {}
         try:
             self.connection.bind()
-            self.connection.search(self.options["ldap_dn_search"], self.options["ldap_group_filter"],
-                                   attributes=["cn", "member"])
+            self.connection.search(self.options["ldap_dn_search"], self.options["ldap_group_filter"], attributes="cn")
             result_groups = self.connection.entries
             for group in result_groups:
                 groups[group.cn.value] = []
-                for member in group.member:
-                    (uid, search_dn) = member.split(",", maxsplit=1)
-                    self.connection.search(search_dn, f"({uid})", attributes=["uid", "mail"])
-                    users = self.connection.entries
-                    for user in users:
-                        groups[group.cn.value].append(user.mail.value)
+
+                self.connection.search(self.options["ldap_dn_search"],
+                                       f"(&{self.options['ldap_user_filter']}(memberof={group.entry_dn}))",
+                                       attributes=["mail"])
+                members = self.connection.entries
+
+                for member in members:
+                    groups[group.cn.value].append(member.mail.value)
             self.connection.unbind()
-        except:
-            print(f"Cannot bind to {self.options['ldap_uri']}!")
+        except Exception as e:
+            print(f"Cannot bind to {self.options['ldap_uri']}: {e}!")
 
         return groups
 
@@ -70,6 +71,8 @@ def main(*args: str) -> int:
                         default="dc=example,dc=com")
     parser.add_argument("--ldap-group-filter", help="LDAP group filter", type=str, required=False,
                         default="(objectClass=ipausergroup)")
+    parser.add_argument("--ldap-user-filter", help="LDAP user filter", type=str, required=False,
+                        default="(objectClass=person)")
     parser.add_argument("--jinja-template", help="Jinja2 template file", type=str, required=False,
                         default="acls.yaml.jinja2")
     parser.add_argument("--output-file", help="Output file", type=str, required=False, default="acls.yaml")

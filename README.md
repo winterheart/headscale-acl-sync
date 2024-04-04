@@ -35,6 +35,8 @@ options:
                         LDAP BaseDN search
   --ldap-group-filter LDAP_GROUP_FILTER
                         LDAP group filter
+  --ldap-user-filter LDAP_USER_FILTER
+                        LDAP user filter
   --jinja-template JINJA_TEMPLATE
                         Jinja2 template file
   --output-file OUTPUT_FILE
