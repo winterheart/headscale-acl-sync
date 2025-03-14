@@ -1,8 +1,8 @@
-jinja_template: acls.yaml.jinja2
+jinja_template: acls.json.jinja2
 ldap_dn_search: dc=example,dc=com
 ldap_group_filter: "(objectClass=ipausergroup)"
-ldap_user_filter: "(objectClass=person)""
+ldap_user_filter: "(objectClass=person)"
 ldap_password: Password
 ldap_uri: ldap://localhost
 ldap_user: cn=admin
-output_file: acls.yaml
+output_file: acls.json

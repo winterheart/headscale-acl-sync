@@ -74,8 +74,8 @@ def main(*args: str) -> int:
     parser.add_argument("--ldap-user-filter", help="LDAP user filter", type=str, required=False,
                         default="(objectClass=person)")
     parser.add_argument("--jinja-template", help="Jinja2 template file", type=str, required=False,
-                        default="acls.yaml.jinja2")
-    parser.add_argument("--output-file", help="Output file", type=str, required=False, default="acls.yaml")
+                        default="acls.json.jinja2")
+    parser.add_argument("--output-file", help="Output file", type=str, required=False, default="acls.json")
     args = parser.parse_args()
 
     opt = vars(args)

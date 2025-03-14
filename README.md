@@ -14,6 +14,8 @@ headscale-acl-sync requires:
 * ldap3 (https://pypi.org/project/ldap3/)
 * pyaml (https://pypi.org/project/PyYAML/)
 
+headscale-acl-sync produces HuJSON style acl.json (requires Headscale >=0.23.0).
+
 Usage
 -----
 
@@ -48,25 +50,36 @@ Create config.yaml (see config.yaml.example) and fill it with actual values.
 In LDAP create groups with prefix `headscale_` in name and add to its users.
 
 Next, copy actual ACL file from working configuration of Headscale as
-`acls.yaml.jinja2`. Add under `groups` section this code:
+`acls.json.jinja2`. Add under `groups` section this code:
 
 ```
-  # Automated Jinja2 controlled groups begin
+{
+  /* This is HuJSON syntax file. Comments are allowed. YAY! */
+  "groups": {
+    /* Automated Jinja2 controlled groups begin */
 {%for group_key, group_value in groups.items() %}
-  group:{{ group_key.split("_")[1] }}:
+    "group:{{ group_key.split("_")[1] }}": [
 {% for entry in group_value %}
-    - {{ entry }}
+      "{{ entry }}",
 {% endfor %}
+    ],
+{% endfor %}
+    /* Automated Jinja2 controlled groups end */
+  }
 
-{% endfor %}
-  # Automated Jinja2 controlled groups end
+  /* Place here rest of acls: rules, tags etc */
+  
+  /* ... */
+  
+  /* EOF */
+}
 ```
 
 After first run `headscale-acl-sync` will fill it with groups of actual users
-and saves generated file as `acls.yaml`. You can use these groups as ACL
-objects below in `acls.yaml.jinja2`.
+and saves generated file as `acls.json`. You can use these groups as ACL
+objects below in `acls.json.jinja2`.
 
-Use this `acls.yaml` in Headscale config.
+Use this `acls.json` in Headscale config.
 
 Periodic run
 ------------
@@ -74,7 +87,7 @@ Periodic run
 Add command into cron like this (runs every 5 minutes):
 
 ```
-*/5 * * * * /path/to/headscal-acl-sync.py --output-file /etc/headscale/acls.yaml && systemctl restart headscale
+*/5 * * * * /path/to/headscal-acl-sync.py --output-file /etc/headscale/acls.json && systemctl restart headscale
 ```
 
 License
